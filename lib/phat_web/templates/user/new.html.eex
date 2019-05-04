@@ -1,0 +1,23 @@
+<h1>Sign Up</h1>
+
+<%= form_for @conn, Routes.user_path(@conn, :create), [method: :post, as: :user], fn f -> %>
+  <div class="form-group">
+    <%= text_input f, :first_name, placeholder: "First Name" %>
+  </div>
+
+  <div class="form-group">
+    <%= text_input f, :last_name, placeholder: "Last Name" %>
+  </div>
+
+  <div class="form-group">
+    <%= text_input f, :email, placeholder: "Email" %>
+  </div>
+
+  <div class="form-group">
+    <%= password_input f, :password, placeholder: "Password" %>
+  </div>
+
+  <div class="form-group">
+    <%= submit "Sign Up" %>
+  </div>
+<% end %>

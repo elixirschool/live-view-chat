@@ -1,0 +1,2 @@
+<h1>Profile</h1>
+<%= @conn.assigns.user.first_name %>

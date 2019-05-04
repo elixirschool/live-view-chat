@@ -1,0 +1,5 @@
+<ul>
+  <%= for chat <- @conn.assigns.chats do %>
+    <p><%= link(chat.room_name, to: "/chats/#{chat.id}") %></p>
+  <% end %>
+</ul>

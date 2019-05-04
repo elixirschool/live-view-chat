@@ -1,0 +1,21 @@
+<h1>Sign in</h1>
+
+<%= form_for @conn, Routes.session_path(@conn, :create), [method: :post, as: :user], fn f -> %>
+  <div class="form-group">
+    <%= text_input f, :email, placeholder: "Email" %>
+  </div>
+
+  <div class="form-group">
+    <%= password_input f, :password, placeholder: "Password" %>
+  </div>
+
+  <div class="form-group">
+    <%= submit "Login" %>
+  </div>
+<% end %>
+
+<%= form_for @conn, Routes.session_path(@conn, :delete), [method: :delete, as: :user], fn _ -> %>
+  <div class="form-group">
+    <%= submit "logout" %>
+  </div>
+<% end %>
