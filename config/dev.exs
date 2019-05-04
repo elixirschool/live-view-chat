@@ -52,7 +52,8 @@ config :phat, PhatWeb.Endpoint,
       ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
       ~r{lib/phat_web/views/.*(ex)$},
-      ~r{lib/phat_web/templates/.*(eex)$}
+      ~r{lib/phat_web/templates/.*(eex)$},
+      ~r{lib/phat_web/live/.*(ex)$}
     ]
   ]
 
