@@ -108,7 +108,7 @@ header nav ul,
 header nav li {
   margin: 0;
   padding: 0;
-  display: block;
+  display: inline-block;
   text-align: right;
   white-space: nowrap;
 }
@@ -117,8 +117,30 @@ header nav ul {
   margin-top: 0;
 }
 header nav a {
-  display: block;
+  display: inline-block;
 }
+
+.messages {
+  height: 350px;
+  overflow: scroll;
+}
+
+.chatroom {
+  width: 900px;
+}
+
+.chat-content {
+  display: inline-block;
+  width: 600px;
+}
+
+.members {
+  display: inline-block;
+  float: right;
+  width: 200px;
+}
+
+
 
 @media (min-width: 40.0rem) { /* Small devices (landscape phones, 576px and up) */
   header section {

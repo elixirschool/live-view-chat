@@ -5,22 +5,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Phat · Phoenix Framework</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" href="<%= Routes.static_path(@conn, "/css/app.css") %>"/>
   </head>
   <body>
     <header>
       <section class="container">
         <nav role="navigation">
-          <ul>
-            <%= form_for @conn, Routes.session_path(@conn, :delete), [method: :delete, as: :user], fn _ -> %>
-              <div class="form-group">
-                <%= submit "logout" %>
-              </div>
-            <% end %>
-          </ul>
+          <%= if @conn.assigns.current_user do %>
+            <ul>
+              <li>
+                <%= link("chat rooms", to: "/chats") %> |
+              </li>
+              <li>
+                <%= link("logout", to: "/sessions", method: :delete) %>
+              </li>
+            </ul>
+          <%= else %>
+            <li>Log In</li>
+          <%= end %>
         </nav>
         <a href="http://phoenixframework.org/" class="phx-logo">
-          <img src="<%= Routes.static_path(@conn, "/images/phoenix.png") %>" alt="Phoenix Framework Logo"/>
+          <h1>Phat Chat</h1>
         </a>
       </section>
     </header>
