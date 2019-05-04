@@ -10,6 +10,7 @@ defmodule Phat.Repo.Migrations.AddUsersTable do
 
       timestamps()
     end
+
     create unique_index(:users, [:email])
   end
 end

@@ -6,7 +6,6 @@ defmodule PhatWeb.SessionController do
     render(conn, "new.html")
   end
 
-
   def create(conn, %{"user" => user_params}) do
     case Session.authenticate(user_params) do
       {:ok, user} ->
@@ -15,6 +14,7 @@ defmodule PhatWeb.SessionController do
         |> put_session(:user_id, user.id)
         |> configure_session(renew: true)
         |> redirect(to: "/chats")
+
       :error ->
         conn
         |> put_flash(:error, "Bad email/password combination")

@@ -3,11 +3,11 @@ defmodule Phat.Repo.Migrations.AddMessagesTable do
 
   def change do
     create table(:messages) do
-       add :chat_id, :integer
-       add :content, :text
-       add :user_id, :integer
+      add :chat_id, :integer
+      add :content, :text
+      add :user_id, :integer
 
-       timestamps()
+      timestamps()
     end
   end
 end

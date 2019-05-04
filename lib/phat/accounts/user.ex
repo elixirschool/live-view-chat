@@ -3,7 +3,6 @@ defmodule Phat.Accounts.User do
   import Ecto.Changeset
   alias Phat.User
 
-
   schema "users" do
     field :first_name, :string
     field :last_name, :string
@@ -27,6 +26,7 @@ defmodule Phat.Accounts.User do
     case changeset do
       %Ecto.Changeset{valid?: true, changes: %{password: password}} ->
         put_change(changeset, :encrypted_password, Comeonin.Bcrypt.hashpwsalt(password))
+
       _ ->
         changeset
     end

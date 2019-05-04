@@ -18,9 +18,11 @@ defmodule PhatWeb.Router do
     pipe_through :browser
 
     resources "/users", UserController
+
     resources "/sessions", SessionController,
       only: [:new, :create, :delete],
       singleton: true
+
     resources "/chats", ChatController
   end
 end

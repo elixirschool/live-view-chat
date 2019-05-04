@@ -1,0 +1,22 @@
+<div class="">
+  <div>
+    <%= @chat.room_name %>
+  </div>
+</div>
+
+<div>
+  <ul>
+    <%=for message <- @chat.messages do %>
+      <p> <strong> <%= message.user.first_name %>: </strong><%= message.content %></p>
+    <% end %>
+  </ul>
+
+</div>
+
+<div class="form-group">
+  <%= form_for @message, "#", [phx_submit: :save], fn _f -> %>
+    <%= text_input :message, :content, placeholder: "write your message here..." %>
+    <%= hidden_input :message, :user_id, value: @current_user.id  %>
+    <%= submit "submit" %>
+  <% end %>
+</div>

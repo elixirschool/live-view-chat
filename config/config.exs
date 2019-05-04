@@ -27,6 +27,7 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
 config :phoenix,
   template_engines: [leex: Phoenix.LiveView.Engine]
 
