@@ -29,14 +29,24 @@ defmodule PhatWeb.ChatLiveView do
      )}
   end
 
-  def handle_info(%{event: "save", payload: state}, socket) do
+  def handle_info(%{event: "message", payload: state}, socket) do
     {:noreply, assign(socket, state)}
   end
 
-  def handle_event("save", %{"message" => message_params}, socket = %{assigns: %{chat: chat}}) do
+  def handle_event("message", %{"message" => message_params}, socket = %{assigns: %{chat: chat}}) do
     chat = Chats.create_message(chat, message_params)
-    PhatWeb.Endpoint.broadcast_from(self(), topic(chat.id), "save", %{chat: chat})
+    PhatWeb.Endpoint.broadcast_from(self(), topic(chat.id), "message", %{chat: chat})
     {:noreply, assign(socket, chat: chat)}
+  end
+
+  def handle_event("typing", _value, socket = %{assigns: %{chat: chat, current_user: user}} ) do
+    update_presence(topic(chat.id), user, %{typing: true})
+    {:noreply, socket}
+  end
+
+  def handle_event("stop_typing", _value, socket = %{assigns: %{chat: chat, current_user: user}} ) do
+    update_presence(topic(chat.id), user, %{typing: false})
+    {:noreply, socket}
   end
 
   defp presences(chat_id) do
@@ -53,6 +63,13 @@ defmodule PhatWeb.ChatLiveView do
       first_name: user.first_name,
       user_id: user.id
     })
+  end
+
+  defp update_presence(topic, user, payload) do
+    metas = Presence.get_by_key(topic, user.id)[:metas]
+    |> List.first
+    |> Map.merge(payload)
+    Presence.update(self(), topic, user.id, metas)
   end
 
   defp subscribe(topic) do

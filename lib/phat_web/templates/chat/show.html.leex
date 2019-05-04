@@ -14,8 +14,8 @@
 </div>
 
 <div class="form-group">
-  <%= form_for @message, "#", [phx_submit: :save], fn _f -> %>
-    <%= text_input :message, :content, placeholder: "write your message here..." %>
+  <%= form_for @message, "#", [phx_change: :typing, phx_submit: :message], fn _f -> %>
+    <%= text_input :message, :content, phx_blur: "stop_typing", placeholder: "write your message here..." %>
     <%= hidden_input :message, :user_id, value: @current_user.id  %>
     <%= submit "submit" %>
   <% end %>
@@ -24,7 +24,19 @@
 <div class="">
   <ul>
     <%= for user <- @users do %>
-    <p><%= user.first_name %></p>
+      <%= if user.first_name == @current_user.first_name do %>
+        <%= if user.typing do %>
+          <p><strong><%= user.first_name %>...</strong></p>
+        <%= else %>
+          <p><strong><%= user.first_name %></strong></p>
+        <%= end %>
+      <%= else %>
+        <%= if user.typing do %>
+          <p><%= user.first_name %>...</p>
+        <%= else %>
+          <p><%= user.first_name %></p>
+        <%= end %>
+      <% end %>
     <% end %>
   </ul>
 </div>
