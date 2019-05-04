@@ -42,17 +42,17 @@ defmodule PhatWeb.ChatLiveView do
   defp presences(chat_id) do
     Presence.list("chat:#{chat_id}")
     |> Enum.map(fn {_user_id, data} ->
-        data[:metas]
-        |> List.first()
+      data[:metas]
+      |> List.first()
     end)
   end
 
   defp track(topic, user) do
     Presence.track(self(), topic, user.id, %{
-       typing: false,
-       first_name: user.first_name,
-       user_id: user.id
-     })
+      typing: false,
+      first_name: user.first_name,
+      user_id: user.id
+    })
   end
 
   defp subscribe(topic) do
