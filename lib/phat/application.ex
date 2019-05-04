@@ -11,7 +11,8 @@ defmodule Phat.Application do
       # Start the Ecto repository
       Phat.Repo,
       # Start the endpoint when the application starts
-      PhatWeb.Endpoint
+      PhatWeb.Endpoint,
+      PhatWeb.Presence
       # Starts a worker by calling: Phat.Worker.start_link(arg)
       # {Phat.Worker, arg},
     ]

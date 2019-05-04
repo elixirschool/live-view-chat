@@ -20,3 +20,11 @@
     <%= submit "submit" %>
   <% end %>
 </div>
+
+<div class="">
+  <ul>
+    <%= for user <- @users do %>
+    <p><%= user.first_name %></p>
+    <% end %>
+  </ul>
+</div>
