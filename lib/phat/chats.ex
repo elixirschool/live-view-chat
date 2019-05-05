@@ -9,25 +9,19 @@ defmodule Phat.Chats do
     |> Repo.insert()
   end
 
-  def create_message(chat, message_params) do
-    message_params =
-      message_params
-      |> Map.new(fn {k, v} -> {String.to_atom(k), v} end)
-      |> Map.put(:user_id, String.to_integer(message_params["user_id"]))
+  def create_message(message_params) do
+    Message.changeset(%Message{}, message_params)
+    |> Repo.insert!()
 
-    message = Ecto.build_assoc(chat, :messages, message_params)
-    messages = Enum.reverse([message | chat.messages])
-
-    chat =
-      Ecto.Changeset.change(chat)
-      |> Ecto.Changeset.put_assoc(:messages, messages)
-      |> Repo.update!()
-
-    Phat.Chats.get_chat(chat.id)
+    Phat.Chats.get_chat(message_params["chat_id"])
   end
 
-  def change_message(changeset \\ %Message{}) do
-    Message.changeset(changeset)
+  def change_message do
+    Message.changeset(%Message{})
+  end
+
+  def change_message(changeset, changes) do
+    Message.changeset(changeset, changes)
   end
 
   def list_chats do

@@ -12,7 +12,7 @@
     <header>
       <section class="container">
         <nav role="navigation">
-          <%= if @conn.assigns.current_user do %>
+          <%= if @conn.assigns[:current_user] do %>
             <ul>
               <li>
                 <%= link("chat rooms", to: "/chats") %> |

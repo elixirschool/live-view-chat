@@ -7,7 +7,9 @@
       <div class="list-group-item  messages">
         <ul>
           <%=for message <- @chat.messages do %>
-          <p> <strong> <%= message.user.first_name %>: </strong><%= message.content %></p>
+          <p> <strong style="color: <%= username_color(message.user, @username_colors) %>">
+            <%= message.user.first_name %>: </strong><%= message.content %>
+          </p>
           <% end %>
         </ul>
 
@@ -16,8 +18,9 @@
 
     <div class="form-group">
       <%= form_for @message, "#", [phx_change: :typing, phx_submit: :message], fn _f -> %>
-      <%= text_input :message, :content, phx_blur: "stop_typing", placeholder: "write your message here..." %>
+      <%= text_input :message, :content, value: @message.changes[:content], phx_blur: "stop_typing", placeholder: "write your message here..." %>
       <%= hidden_input :message, :user_id, value: @current_user.id  %>
+      <%= hidden_input :message, :chat_id, value: @chat.id  %>
       <%= submit "submit" %>
       <% end %>
     </div>
@@ -29,19 +32,9 @@
       </div>
       <div class="list-group-item">
         <%= for user <- @users do %>
-          <%= if user.first_name == @current_user.first_name do %>
-            <%= if user.typing do %>
-              <p><strong><%= user.first_name %>...</strong></p>
-            <%= else %>
-              <p><strong><%= user.first_name %></strong></p>
-            <%= end %>
-          <%= else %>
-            <%= if user.typing do %>
-              <p><%= user.first_name %>...</p>
-            <%= else %>
-              <p><%= user.first_name %></p>
-            <%= end %>
-          <% end %>
+          <p style="color:<%= username_color(user, @username_colors) %>; font-weight: <%= font_weight(user, @current_user) %>;">
+            <%= user.first_name %><%= elipses(user.typing) %>
+          </p>
         <% end %>
       </div>
     </ul>
