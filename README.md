@@ -1,5 +1,7 @@
 # Phat
 
+A chat app that leverages Phoenix LiveView, PubSub and Presence. Learn all about it by reading this blog post.
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
@@ -7,14 +9,4 @@ To start your Phoenix server:
   * Install Node.js dependencies with `cd assets && npm install`
   * Start Phoenix endpoint with `mix phx.server`
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
-
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
-
-## Learn more
-
-  * Official website: http://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Mailing list: http://groups.google.com/group/phoenix-talk
-  * Source: https://github.com/phoenixframework/phoenix
+Now you can visit [`localhost:4000`](http://localhost:4000/sessions/new) to log in as one of the user's described in `priv/repo/seeds.exs`. Then click the link to the visit the chat room we created via the database seed.
