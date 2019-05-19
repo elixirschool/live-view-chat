@@ -2,7 +2,6 @@ defmodule PhatWeb.ChatLiveView do
   use Phoenix.LiveView
   alias Phat.Chats
   alias PhatWeb.Presence
-  alias PhatWeb.Pid
 
   defp live_view_topic(chat_id), do: "chat:#{chat_id}"
   defp event_bus_topic(chat_id), do: "event_bus:#{chat_id}"
@@ -48,14 +47,7 @@ defmodule PhatWeb.ChatLiveView do
         {:send_to_event_bus, "message_sent"},
         socket = %{assigns: %{chat: chat, current_user: current_user}}
       ) do
-    Presence.list_presences(event_bus_topic(chat.id))
-    |> Enum.each(fn data ->
-      if data.user_id == current_user.id do
-        pid = Pid.from_binary(data.channel_pid)
-        send(pid, :new_message)
-      end
-    end)
-
+    PhatWeb.Endpoint.broadcast(event_bus_topic(chat.id), "new_message", %{current_user_id: current_user.id})
     {:noreply, socket}
   end
 
