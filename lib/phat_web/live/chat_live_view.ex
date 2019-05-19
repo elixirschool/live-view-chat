@@ -2,8 +2,10 @@ defmodule PhatWeb.ChatLiveView do
   use Phoenix.LiveView
   alias Phat.Chats
   alias PhatWeb.Presence
+  alias PhatWeb.Pid
 
-  defp topic(chat_id), do: "chat:#{chat_id}"
+  defp live_view_topic(chat_id), do: "chat:#{chat_id}"
+  defp event_bus_topic(chat_id), do: "event_bus:#{chat_id}"
 
   def render(assigns) do
     PhatWeb.ChatView.render("show.html", assigns)
@@ -12,19 +14,19 @@ defmodule PhatWeb.ChatLiveView do
   def mount(%{chat: chat, current_user: current_user}, socket) do
     Presence.track_presence(
       self(),
-      topic(chat.id),
+      live_view_topic(chat.id),
       current_user.id,
       default_user_presence_payload(current_user)
     )
 
-    PhatWeb.Endpoint.subscribe(topic(chat.id))
+    PhatWeb.Endpoint.subscribe(live_view_topic(chat.id))
 
     {:ok,
      assign(socket,
        chat: chat,
        message: Chats.change_message(),
        current_user: current_user,
-       users: Presence.list_presences(topic(chat.id)),
+       users: Presence.list_presences(live_view_topic(chat.id)),
        username_colors: username_colors(chat)
      )}
   end
@@ -32,23 +34,25 @@ defmodule PhatWeb.ChatLiveView do
   def handle_info(%{event: "presence_diff"}, socket = %{assigns: %{chat: chat}}) do
     {:noreply,
      assign(socket,
-       users: Presence.list_presences(topic(chat.id))
+       users: Presence.list_presences(live_view_topic(chat.id))
      )}
   end
 
   def handle_info(%{event: "message", payload: state}, socket) do
-    # 2
-    IO.puts("HANDLING LV BROADCAST")
-    send(self(), {:send_message_to_event_bus, "message_sent"})
-    IO.puts("RE-RENDERING OTHER LV #{socket.assigns.current_user.id}")
+    send(self(), {:send_to_event_bus, "message_sent"})
     {:noreply, assign(socket, state)}
   end
 
-  def handle_info({:send_message_to_event_bus, "message_sent"}, socket) do
-    Presence.list_presences("event_bus:#{socket.assigns.chat.id}")
+  def handle_info(
+        {:send_to_event_bus, "message_sent"},
+        socket = %{assigns: %{chat: chat, current_user: current_user}}
+      ) do
+    Presence.list_presences(event_bus_topic(chat.id))
     |> Enum.each(fn data ->
-      pid = data.channel_pid |> :base64.decode() |> :erlang.binary_to_term
-      send(pid, :new_message)
+      if data.user_id == current_user.id do
+        pid = Pid.from_binary(data.channel_pid)
+        send(pid, :new_message)
+      end
     end)
 
     {:noreply, socket}
@@ -60,12 +64,12 @@ defmodule PhatWeb.ChatLiveView do
 
   def handle_event("message", %{"message" => message_params}, socket) do
     chat = Chats.create_message(message_params)
-    PhatWeb.Endpoint.broadcast(topic(chat.id), "message", %{chat: chat})
+    PhatWeb.Endpoint.broadcast(live_view_topic(chat.id), "message", %{chat: chat})
     {:noreply, assign(socket, chat: chat, message: Chats.change_message())}
   end
 
   def handle_event("typing", _value, socket = %{assigns: %{chat: chat, current_user: user}}) do
-    Presence.update_presence(self(), topic(chat.id), user.id, %{typing: true})
+    Presence.update_presence(self(), live_view_topic(chat.id), user.id, %{typing: true})
     {:noreply, socket}
   end
 
@@ -75,7 +79,7 @@ defmodule PhatWeb.ChatLiveView do
         socket = %{assigns: %{chat: chat, current_user: user, message: message}}
       ) do
     message = Chats.change_message(message, %{content: value})
-    Presence.update_presence(self(), topic(chat.id), user.id, %{typing: false})
+    Presence.update_presence(self(), live_view_topic(chat.id), user.id, %{typing: false})
     {:noreply, assign(socket, message: message)}
   end
 

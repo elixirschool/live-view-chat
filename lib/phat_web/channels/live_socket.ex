@@ -22,7 +22,7 @@ defmodule PhatWeb.LiveSocket do
   """
   @impl Phoenix.Socket
   def connect(params, %Phoenix.Socket{} = socket, _connect_info) do
-    {:ok, socket}
+    {:ok, assign(socket, :current_user_id, String.to_integer(params["user_id"]))}
   end
 
   @doc """

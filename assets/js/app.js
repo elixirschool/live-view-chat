@@ -13,11 +13,11 @@ import "phoenix_html"
 
 import LiveSocket from "phoenix_live_view"
 
-let liveSocket = new LiveSocket("/live")
+let userId = document.getElementById("user_id").innerText
+let liveSocket = new LiveSocket("/live", {params: {user_id: userId}})
 liveSocket.connect()
 
 let chatId = window.location.pathname.split("/")[2]
-let userId = document.getElementById("user_id").innerText
 
 let channel = liveSocket.channel("event_bus:" + chatId, {})
 channel.join().receive("ok", resp => { console.log("JOINED") })
@@ -26,6 +26,7 @@ const targetNode = document.getElementsByClassName("messages")[0]
 channel.on("new_chat_message", function() {
   console.log("HI")
   targetNode.scrollTop = targetNode.scrollHeight
+  document.getElementById("members").append("<h1>HI</h1>")
 })
 
 document.addEventListener("DOMContentLoaded", function() {

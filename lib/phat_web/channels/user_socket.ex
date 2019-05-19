@@ -4,7 +4,6 @@ defmodule PhatWeb.UserSocket do
   ## Channels
   # channel "room:*", PhatWeb.RoomChannel
 
-
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
   # verification, you can put default assigns into
