@@ -41,7 +41,6 @@ defmodule PhatWeb.ChatLiveView do
   end
 
   def handle_info({:send_message_to_event_bus, "message_sent"}, socket) do
-    IO.puts "BROADCASTING..."
     PhatWeb.Endpoint.broadcast!("event_bus:#{socket.assigns.chat.id}", "new_chat_message", %{})
     {:noreply, socket}
   end
