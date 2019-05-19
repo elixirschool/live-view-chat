@@ -14,7 +14,9 @@ import "phoenix_html"
 import LiveSocket from "phoenix_live_view"
 
 let userId = document.getElementById("user_id").innerText
-let liveSocket = new LiveSocket("/live", {params: {user_id: userId}})
+let channelToken = document.getElementsByTagName('meta')[3].content
+
+let liveSocket = new LiveSocket("/live", {params: {channel_token: channelToken}})
 liveSocket.connect()
 
 let chatId = window.location.pathname.split("/")[2]

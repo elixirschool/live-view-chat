@@ -27,7 +27,8 @@ defmodule PhatWeb.ChatLiveView do
        message: Chats.change_message(),
        current_user: current_user,
        users: Presence.list_presences(live_view_topic(chat.id)),
-       username_colors: username_colors(chat)
+       username_colors: username_colors(chat),
+       token: Phoenix.Token.sign(PhatWeb.Endpoint, "user salt", current_user.id)
      )}
   end
 
