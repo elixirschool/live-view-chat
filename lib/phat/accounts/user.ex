@@ -1,7 +1,7 @@
 defmodule Phat.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Phat.User
+  @derive {Jason.Encoder, only: [:first_name, :last_name, :email, :id]}
 
   schema "users" do
     field :first_name, :string

@@ -3,6 +3,7 @@ defmodule Phat.Chats.Message do
   import Ecto.Changeset
   alias Phat.Chats.Chat
   alias Phat.Accounts.User
+  @derive {Jason.Encoder, only: [:user, :user_id, :content, :chat_id]}
 
   schema "messages" do
     belongs_to :chat, Chat

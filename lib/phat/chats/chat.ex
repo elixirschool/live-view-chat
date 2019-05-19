@@ -3,6 +3,8 @@ defmodule Phat.Chats.Chat do
   import Ecto.Changeset
   alias Phat.Chats.Message
 
+  @derive {Jason.Encoder, only: [:messages, :room_name, :id]}
+
   schema "chats" do
     has_many :messages, Message
     field :room_name, :string
