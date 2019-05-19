@@ -13,8 +13,18 @@ import "phoenix_html"
 
 import LiveSocket from "phoenix_live_view"
 
+
 let liveSocket = new LiveSocket("/live")
 liveSocket.connect()
+
+let chatId = window.location.pathname.split("/")[2]
+let channel = liveSocket.channel("event_bus:" + chatId)
+channel.join()
+  .receive("ok", resp => { console.log("JOINED") })
+
+channel.on("new_chat_message", function() {
+  alert("NEW MESSAGE!")
+})
 
 // Select the node that will be observed for mutations
 const targetNode = document.getElementsByClassName("messages")[0]
