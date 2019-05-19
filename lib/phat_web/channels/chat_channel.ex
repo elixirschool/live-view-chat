@@ -18,7 +18,6 @@ defmodule PhatWeb.ChatChannel do
   end
 
   def handle_info(:new_message, socket) do
-    IO.puts("IN CHANNEL")
     push(socket, "new_chat_message", %{})
     {:noreply, socket}
   end
