@@ -21,7 +21,7 @@ defmodule PhatWeb.LiveSocket do
   Connects the Phoenix.Socket for a LiveView client.
   """
   @impl Phoenix.Socket
-  def connect(_params, %Phoenix.Socket{} = socket, _connect_info) do
+  def connect(params, %Phoenix.Socket{} = socket, _connect_info) do
     {:ok, socket}
   end
 

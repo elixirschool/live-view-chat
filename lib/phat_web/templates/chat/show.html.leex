@@ -1,3 +1,6 @@
+<div id="user_id">
+<%= @current_user.id %>
+</div>
 <div class="chatroom">
   <div class="chat-content">
     <div class="list-group">
@@ -6,7 +9,7 @@
       </div>
       <div class="list-group-item  messages">
         <ul>
-          <%=for message <- @chat.messages do %>
+          <%=for message <- Enum.sort(@chat.messages, fn m1, m2 -> m1.inserted_at < m2.inserted_at end) do %>
           <p> <strong style="color: <%= username_color(message.user, @username_colors) %>">
             <%= message.user.first_name %>: </strong><%= message.content %>
           </p>
@@ -25,7 +28,7 @@
       <% end %>
     </div>
   </div>
-  <div class="members list-group">
+  <div class="members list-group" id="members">
     <ul>
       <div class="list-group-item active">
         <h3>Members</h3>

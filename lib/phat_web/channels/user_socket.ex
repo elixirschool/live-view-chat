@@ -3,6 +3,7 @@ defmodule PhatWeb.UserSocket do
 
   ## Channels
   # channel "room:*", PhatWeb.RoomChannel
+  channel "event_bus:*", PhatWeb.ChatChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -15,8 +16,8 @@ defmodule PhatWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(params, socket, _connect_info) do
+    {:ok, assign(socket, :current_user_id, String.to_integer(params["user_id"]))}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

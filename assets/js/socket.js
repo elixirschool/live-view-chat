@@ -7,8 +7,27 @@
 // Pass the token on params as below. Or remove it
 // from the params if you are not using authentication.
 import {Socket} from "phoenix"
+let userId = document.getElementById("user_id").innerText
+let socket = new Socket("/socket", {params: {user_id: userId}})
 
-let socket = new Socket("/socket", {params: {token: window.userToken}})
+socket.connect()
+
+let chatId = window.location.pathname.split("/")[2]
+
+let channel = socket.channel("event_bus:" + chatId, {})
+channel.join().receive("ok", resp => { console.log("JOINED") })
+
+const targetNode = document.getElementsByClassName("messages")[0]
+channel.on("new_chat_message", function() {
+  console.log("HI")
+  targetNode.scrollTop = targetNode.scrollHeight
+})
+
+// Select the node that will be observed for mutations
+//
+// document.addEventListener("DOMContentLoaded", function() {
+//   targetNode.scrollTop = targetNode.scrollHeight
+// });
 
 // When you connect, you'll often need to authenticate the client.
 // For example, imagine you have an authentication plug, `MyAuth`,
@@ -52,12 +71,12 @@ let socket = new Socket("/socket", {params: {token: window.userToken}})
 //     end
 //
 // Finally, connect to the socket:
-socket.connect()
-
-// Now that you are connected, you can join channels with a topic:
-let channel = socket.channel("topic:subtopic", {})
-channel.join()
-  .receive("ok", resp => { console.log("Joined successfully", resp) })
-  .receive("error", resp => { console.log("Unable to join", resp) })
+// socket.connect()
+//
+// // Now that you are connected, you can join channels with a topic:
+// let channel = socket.channel("topic:subtopic", {})
+// channel.join()
+//   .receive("ok", resp => { console.log("Joined successfully", resp) })
+//   .receive("error", resp => { console.log("Unable to join", resp) })
 
 export default socket

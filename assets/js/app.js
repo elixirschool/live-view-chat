@@ -13,25 +13,26 @@ import "phoenix_html"
 
 import LiveSocket from "phoenix_live_view"
 
-
 let liveSocket = new LiveSocket("/live")
 liveSocket.connect()
 
 let chatId = window.location.pathname.split("/")[2]
-let channel = liveSocket.channel("event_bus:" + chatId)
-channel.join()
-  .receive("ok", resp => { console.log("JOINED") })
+let userId = document.getElementById("user_id").innerText
+
+let channel = liveSocket.channel("event_bus:" + chatId, {})
+channel.join().receive("ok", resp => { console.log("JOINED") })
 
 const targetNode = document.getElementsByClassName("messages")[0]
 channel.on("new_chat_message", function() {
+  console.log("HI")
   targetNode.scrollTop = targetNode.scrollHeight
 })
 
-// Select the node that will be observed for mutations
-//
 document.addEventListener("DOMContentLoaded", function() {
+  const targetNode = document.getElementsByClassName("messages")[0]
   targetNode.scrollTop = targetNode.scrollHeight
 });
+
 
 // Import local files
 //
