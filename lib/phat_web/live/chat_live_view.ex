@@ -45,18 +45,11 @@ defmodule PhatWeb.ChatLiveView do
   end
 
   def handle_info({:send_message_to_event_bus, "message_sent"}, socket) do
-    # 3
-    IO.puts("SENDING TO CHANNEL...")
-
     Presence.list_presences("event_bus:#{socket.assigns.chat.id}")
     |> Enum.each(fn data ->
       pid = data.channel_pid |> :base64.decode() |> :erlang.binary_to_term
-      send(pid, {:new_message, %{current_user_id: socket.assigns.current_user.id}})
+      send(pid, :new_message)
     end)
-
-    # PhatWeb.Endpoint.broadcast!("event_bus:#{socket.assigns.chat.id}", "new_chat_message", %{
-    #   current_user_id: socket.assigns.current_user.id
-    # })
 
     {:noreply, socket}
   end
@@ -66,11 +59,8 @@ defmodule PhatWeb.ChatLiveView do
   end
 
   def handle_event("message", %{"message" => message_params}, socket) do
-    # 1
-    IO.puts("RECEIVING MESSAGE...")
     chat = Chats.create_message(message_params)
     PhatWeb.Endpoint.broadcast(topic(chat.id), "message", %{chat: chat})
-    IO.puts("RE-RENDERING SELF...")
     {:noreply, assign(socket, chat: chat, message: Chats.change_message())}
   end
 
