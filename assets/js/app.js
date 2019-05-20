@@ -13,7 +13,6 @@ import "phoenix_html"
 
 import LiveSocket from "phoenix_live_view"
 
-let userId = document.getElementById("user_id").innerText
 let channelToken = document.getElementsByTagName('meta')[3].content
 
 let liveSocket = new LiveSocket("/live", {params: {channel_token: channelToken}})
@@ -26,9 +25,7 @@ channel.join().receive("ok", resp => { console.log("JOINED") })
 
 const targetNode = document.getElementsByClassName("messages")[0]
 channel.on("new_chat_message", function() {
-  console.log("HI")
   targetNode.scrollTop = targetNode.scrollHeight
-  document.getElementById("members").append("<h1>HI</h1>")
 })
 
 document.addEventListener("DOMContentLoaded", function() {
