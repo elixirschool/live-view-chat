@@ -26,6 +26,7 @@ defmodule PhatWeb.LiveSocket do
       {:ok, user_id} ->
         socket = assign(socket, :current_user_id, user_id)
         {:ok, socket}
+
       {:error, _} ->
         :error
     end

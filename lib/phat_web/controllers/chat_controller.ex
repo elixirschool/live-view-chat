@@ -16,7 +16,7 @@ defmodule PhatWeb.ChatController do
     LiveView.Controller.live_render(
       conn,
       ChatLiveView,
-      session: %{chat: chat, current_user: conn.assigns.current_user}
+      session: %{chat: chat, current_user: conn.assigns.current_user, session_uuid: Ecto.UUID.generate()}
     )
   end
 

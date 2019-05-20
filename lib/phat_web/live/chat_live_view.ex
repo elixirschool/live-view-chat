@@ -4,13 +4,13 @@ defmodule PhatWeb.ChatLiveView do
   alias PhatWeb.Presence
 
   defp live_view_topic(chat_id), do: "chat:#{chat_id}"
-  defp event_bus_topic(chat_id), do: "event_bus:#{chat_id}"
+  defp event_bus_topic(chat_id, session_uuid), do: "event_bus:#{chat_id}:#{session_uuid}"
 
   def render(assigns) do
     PhatWeb.ChatView.render("show.html", assigns)
   end
 
-  def mount(%{chat: chat, current_user: current_user}, socket) do
+  def mount(%{chat: chat, current_user: current_user, session_uuid: session_uuid}, socket) do
     Presence.track_presence(
       self(),
       live_view_topic(chat.id),
@@ -20,15 +20,15 @@ defmodule PhatWeb.ChatLiveView do
 
     PhatWeb.Endpoint.subscribe(live_view_topic(chat.id))
 
-    {:ok,
-     assign(socket,
-       chat: chat,
-       message: Chats.change_message(),
-       current_user: current_user,
-       users: Presence.list_presences(live_view_topic(chat.id)),
-       username_colors: username_colors(chat),
-       token: Phoenix.Token.sign(PhatWeb.Endpoint, "user salt", current_user.id)
-     )}
+    {:ok, assign(socket,
+      chat: chat,
+      message: Chats.change_message(),
+      current_user: current_user,
+      users: Presence.list_presences(live_view_topic(chat.id)),
+      username_colors: username_colors(chat),
+      session_uuid: session_uuid,
+      token: Phoenix.Token.sign(PhatWeb.Endpoint, "user salt", current_user.id)
+    )}
   end
 
   def handle_info(%{event: "presence_diff"}, socket = %{assigns: %{chat: chat}}) do
@@ -45,9 +45,10 @@ defmodule PhatWeb.ChatLiveView do
 
   def handle_info(
         {:send_to_event_bus, "message_sent"},
-        socket = %{assigns: %{chat: chat, current_user: current_user}}
+        socket = %{assigns: %{chat: chat, session_uuid: session_uuid}}
       ) do
-    PhatWeb.Endpoint.broadcast(event_bus_topic(chat.id), "new_message", %{current_user_id: current_user.id})
+    IO.puts "BROADCASTING..."
+    PhatWeb.Endpoint.broadcast(event_bus_topic(chat.id, session_uuid), "new_message", %{})
     {:noreply, socket}
   end
 

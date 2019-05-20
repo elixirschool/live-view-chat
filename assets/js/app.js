@@ -14,19 +14,25 @@ import "phoenix_html"
 import LiveSocket from "phoenix_live_view"
 
 let channelToken = document.getElementsByTagName('meta')[3].content
-
-let liveSocket = new LiveSocket("/live", {params: {channel_token: channelToken}})
+// debugger;
+let sessionUuid = document.getElementById("session_uuid").textContent.trim()
+const liveSocket = new LiveSocket("/live", {params: {channel_token: channelToken}})
 liveSocket.connect()
 
-let chatId = window.location.pathname.split("/")[2]
+liveSocket.socket.onOpen(function(){
+  let sessionUuid = document.getElementById("session_uuid").textContent.trim()
+  let chatId = window.location.pathname.split("/")[2]
+  let channel = liveSocket.channel("event_bus:" + chatId + ":" + sessionUuid, {})
+  channel.join().receive("ok", resp => { console.log("JOINED") })
 
-let channel = liveSocket.channel("event_bus:" + chatId, {})
-channel.join().receive("ok", resp => { console.log("JOINED") })
+  const targetNode = document.getElementsByClassName("messages")[0]
+  channel.on("new_chat_message", function() {
+    targetNode.scrollTop = targetNode.scrollHeight
+  })
 
-const targetNode = document.getElementsByClassName("messages")[0]
-channel.on("new_chat_message", function() {
-  targetNode.scrollTop = targetNode.scrollHeight
+  console.info("the socket was opened")
 })
+
 
 document.addEventListener("DOMContentLoaded", function() {
   const targetNode = document.getElementsByClassName("messages")[0]
