@@ -4,7 +4,6 @@ defmodule PhatWeb.ChatLiveView do
   alias PhatWeb.Presence
 
   defp live_view_topic(chat_id), do: "chat:#{chat_id}"
-  defp event_bus_topic(chat_id, session_uuid), do: "event_bus:#{chat_id}:#{session_uuid}"
 
   def render(assigns) do
     PhatWeb.ChatView.render("show.html", assigns)
@@ -27,7 +26,7 @@ defmodule PhatWeb.ChatLiveView do
       users: Presence.list_presences(live_view_topic(chat.id)),
       username_colors: username_colors(chat),
       session_uuid: session_uuid,
-      token: Phoenix.Token.sign(PhatWeb.Endpoint, "user salt", current_user.id)
+      token: Phoenix.Token.sign(PhatWeb.Endpoint, "user salt", session_uuid)
     )}
   end
 
@@ -45,10 +44,13 @@ defmodule PhatWeb.ChatLiveView do
 
   def handle_info(
         {:send_to_event_bus, "message_sent"},
-        socket = %{assigns: %{chat: chat, session_uuid: session_uuid}}
+        socket = %{assigns: %{session_uuid: session_uuid}}
       ) do
-    IO.puts "BROADCASTING..."
-    PhatWeb.Endpoint.broadcast(event_bus_topic(chat.id, session_uuid), "new_message", %{})
+        require IEx
+        IEx.pry()
+    {_pid, channel_pid} = Registry.lookup(Registry.SessionRegistry, session_uuid)
+    |> List.first()
+    send(channel_pid, "new_message")
     {:noreply, socket}
   end
 

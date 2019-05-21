@@ -7,12 +7,15 @@ defmodule Phat.Application do
 
   def start(_type, _args) do
     # List all child processes to be supervised
+    # Registry.start_link(keys: :unique, name: Registry.UniqueCountTest)
     children = [
       # Start the Ecto repository
       Phat.Repo,
       # Start the endpoint when the application starts
       PhatWeb.Endpoint,
-      PhatWeb.Presence
+      PhatWeb.Presence,
+      # Phat.SessionRegistrySupervisor
+      {Registry, [keys: :unique, name: Registry.SessionRegistry]}
       # Starts a worker by calling: Phat.Worker.start_link(arg)
       # {Phat.Worker, arg},
     ]

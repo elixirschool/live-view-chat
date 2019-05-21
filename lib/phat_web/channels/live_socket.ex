@@ -23,8 +23,8 @@ defmodule PhatWeb.LiveSocket do
   @impl Phoenix.Socket
   def connect(params, socket, _connect_info) do
     case Phoenix.Token.verify(socket, "user salt", params["channel_token"], max_age: 86400) do
-      {:ok, user_id} ->
-        socket = assign(socket, :current_user_id, user_id)
+      {:ok, session_uuid} ->
+        socket = assign(socket, :session_uuid, session_uuid)
         {:ok, socket}
 
       {:error, _} ->
