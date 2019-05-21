@@ -37,30 +37,24 @@ defmodule PhatWeb.ChatLiveView do
      )}
   end
 
-  def handle_info(%{event: "message", payload: state}, socket) do
-    send(self(), {:send_to_event_bus, "message_sent"})
+  def handle_info(%{event: "new_message", payload: state}, socket) do
+    send(self(), {:send_to_event_bus, "new_message"})
     {:noreply, assign(socket, state)}
   end
 
-  def handle_info(
-        {:send_to_event_bus, "message_sent"},
-        socket = %{assigns: %{session_uuid: session_uuid}}
-      ) do
-        require IEx
-        IEx.pry()
-    {_pid, channel_pid} = Registry.lookup(Registry.SessionRegistry, session_uuid)
-    |> List.first()
-    send(channel_pid, "new_message")
+  def handle_info({:send_to_event_bus, msg}, socket = %{assigns: %{session_uuid: session_uuid}}) do
+    [{_pid, channel_pid}] = Registry.lookup(Registry.SessionRegistry, session_uuid)
+    send(channel_pid, msg)
     {:noreply, socket}
   end
 
-  def handle_event("message", %{"message" => %{"content" => ""}}, socket) do
+  def handle_event("new_message", %{"message" => %{"content" => ""}}, socket) do
     {:noreply, socket}
   end
 
-  def handle_event("message", %{"message" => message_params}, socket) do
+  def handle_event("new_message", %{"message" => message_params}, socket) do
     chat = Chats.create_message(message_params)
-    PhatWeb.Endpoint.broadcast(live_view_topic(chat.id), "message", %{chat: chat})
+    PhatWeb.Endpoint.broadcast(live_view_topic(chat.id), "new_message", %{chat: chat})
     {:noreply, assign(socket, chat: chat, message: Chats.change_message())}
   end
 

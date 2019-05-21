@@ -13,6 +13,12 @@ import "phoenix_html"
 
 import LiveSocket from "phoenix_live_view"
 
+const targetNode = document.getElementsByClassName("messages")[0]
+
+document.addEventListener("DOMContentLoaded", function() {
+  targetNode.scrollTop = targetNode.scrollHeight
+});
+
 let channelToken = document.getElementsByTagName('meta')[3].content
 let chatId = window.location.pathname.split("/")[2]
 
@@ -22,19 +28,10 @@ liveSocket.connect()
 let channel = liveSocket.channel("event_bus:" + chatId, {})
 channel.join().receive("ok", resp => { console.log("JOINED") })
 
-const targetNode = document.getElementsByClassName("messages")[0]
-channel.on("new_chat_message", function() {
+channel.on("new_message", function() {
   targetNode.scrollTop = targetNode.scrollHeight
 })
-liveSocket.socket.onOpen(function(){
 
-  console.info("the socket was opened")
-})
-
-
-document.addEventListener("DOMContentLoaded", function() {
-  targetNode.scrollTop = targetNode.scrollHeight
-});
 
 
 // Import local files

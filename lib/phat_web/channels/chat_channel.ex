@@ -6,8 +6,8 @@ defmodule PhatWeb.ChatChannel do
     {:ok, socket}
   end
 
-  def handle_info("new_message", socket) do
-    push(socket, "new_chat_message", %{})
+  def handle_info(msg, socket) do
+    push(socket, msg, %{})
     {:noreply, socket}
   end
 end
