@@ -21,9 +21,9 @@
                 <%= link("logout", to: "/sessions", method: :delete) %>
               </li>
             </ul>
-          <%= else %>
+          <% else %>
             <li>Log In</li>
-          <%= end %>
+          <% end %>
         </nav>
         <a href="http://phoenixframework.org/" class="phx-logo">
           <h1>Phat Chat</h1>
